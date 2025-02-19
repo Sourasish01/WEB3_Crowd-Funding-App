@@ -1,7 +1,15 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
+import profile from '../assets/profile.svg';
+import logo from "../assets/logo.svg";
+import { navlinks } from "../constants/index.js";
+import menu from "../assets/menu.svg";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const [isActive, setIsActive] = useState("dashboard");
+  const [toggleDrawer, setToggleDrawer] = useState(false);
+
   return (
     <div className="flex md:flex-row flex-col-reverse justify-between mb-[35px] gap-6">
 
@@ -13,6 +21,87 @@ const Navbar = () => {
           <img src alt="search" className="w-[15px] h-[15px] object-contain"/>
         </div>
       </div>
+
+      {/* 💻 Desktop Navigation */}
+      <div className="hidden sm:flex gap-4">
+        <button
+          type="button"
+          className={`py-3 px-6 rounded-[10px] font-epilogue font-semibold text-[16px] text-white bg-[#1dc071]
+          `}//${address ? "bg-[#1dc071]" : "bg-[#8c6dfd]"}`
+
+          onClick = {() => navigate("create-campaign")}
+
+          // onClick={() => (address ? navigate("create-campaign") : connect())}
+        >
+         {/* {address ? "Create Campaign" : "Connect Wallet"} */}
+         Create Campaign
+        </button>
+
+        <Link to="/profile" className="w-[52px] h-[52px] rounded-full bg-[#2c2f32] flex items-center justify-center">
+          <img src={profile} alt="user" className="w-[60%] h-[60%]" />
+        </Link>
+      </div>
+
+      {/* 📱 Mobile Navigation */}
+<div className="sm:hidden flex items-center justify-between relative w-full">
+  <img src={logo} alt="logo" className="w-[40px] h-[40px] bg-[#2c2f32] rounded-lg p-2" />
+  <img
+    src={menu}
+    alt="menu"
+    className="w-[34px] h-[34px] cursor-pointer"
+    onClick={() => setToggleDrawer(!toggleDrawer)}
+  />
+
+  {/* 📂 Toggle Drawer for Mobile */}
+  {toggleDrawer && (
+    <div className="absolute top-[60px] right-0 left-0 bg-[#1c1c24] z-10 shadow-secondary py-4 transition-all duration-700">
+      <ul>
+        {navlinks.map(({ name, link, imgUrl }) => (
+          <li
+            key={name}
+            className={`flex p-4 cursor-pointer ${
+              isActive === name ? "bg-[#3a3a43]" : ""
+            }`}
+            onClick={() => {
+              setIsActive(name);
+              setToggleDrawer(false);
+              navigate(link);
+            }}
+          >
+            <img
+              src={imgUrl}
+              alt={name}
+              className={`w-[24px] h-[24px] ${
+                isActive === name ? "" : "grayscale"
+              }`}
+            />
+            <p
+              className={`ml-4 font-semibold text-[14px] ${
+                isActive === name ? "text-[#1dc071]" : "text-[#808191]"
+              }`}
+            >
+              {name}
+            </p>
+          </li>
+        ))}
+      </ul>
+
+      {/* 🔘 Replaced CustomButton with normal button */}
+      <div className="px-4">
+        <button
+          type="button"
+          className={`w-full py-3 px-6 rounded-[10px] font-epilogue font-semibold text-[16px] text-white bg-[#1dc071] 
+            `} //${address ? "bg-[#1dc071]" : "bg-[#8c6dfd]"}
+
+          // onClick={() => (address ? navigate("create-campaign") : connect())}
+        >
+          { /*address ? "Create a campaign" : "Connect"*/ }
+          Create a campaign
+        </button>
+      </div>
+    </div>
+  )}
+</div>
 
       
     </div>  
