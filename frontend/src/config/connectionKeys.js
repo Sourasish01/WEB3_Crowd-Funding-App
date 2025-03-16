@@ -1,6 +1,6 @@
-const contractAddress = "";
+export const contractAddress = "";
 
-const contractAbi = [
+export const contractAbi = [
     {
         "inputs": [
           {
