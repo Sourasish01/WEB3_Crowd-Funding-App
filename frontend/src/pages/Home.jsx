@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from "uuid";
+//import { v4 as uuidv4 } from "uuid";
 import { contractAddress } from "../config/connectionKeys";
 
 import getContractInstance from "../store/contractInstance";
@@ -77,7 +77,7 @@ const Home = () => {
           campaigns.length > 0 &&
           campaigns.map((campaign) => ( // For each campaign, a FundCard component is rendered.
             <FundCard
-             key={uuidv4()}
+            key={campaign.id} // The key prop is set to the campaign id.    //key={uuidv4()}
             {...campaign} // The spread operator ({...campaign}) means that all properties of campaign (id, owner, title, description, target, etc.) are automatically passed as individual props to FundCard.
             handleClick={() => handleNavigate(campaign)} //The handleClick function is passed, which calls handleNavigate(campaign), navigating to the campaign details page.
             />

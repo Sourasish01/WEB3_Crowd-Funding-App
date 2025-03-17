@@ -1,16 +1,20 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-//import { ethers } from 'ethers';
+import { ethers } from 'ethers';
 
 // import { useStateContext } from '../context';
 import  money from '../assets/money.svg';
-// import { checkIfImage } from '../utils/checkIfImageFunction.js';
+import { checkIfImage } from '../utils/checkIfImageFunction.js';
+
+import createCampaign from '../store/createCampaign.js';
 
 import FormField from '../components/FormField.jsx';
 import Loader from '../components/Loader.jsx';
 
 const CreateCampaign = () => {
+
   const navigate = useNavigate();
+
   const [isLoading, setIsLoading] = useState(false);
    // const { createCampaign } = useStateContext();
   const [form, setForm] = useState({
@@ -32,17 +36,22 @@ const CreateCampaign = () => {
   const handleSubmit = async (e) => {
     e.preventDefault(); // the values entered by the user are not lost when the form is submitted... due to the default behavior of the form element ,ie to refresh the page when submitted
 
-    /*checkIfImage(form.image, async (exists) => {
+    checkIfImage(form.image, async (exists) => { // The checkIfImage function is called with the image URL and a callback function that receives a boolean value (exists) indicating whether the image exists or not.
+      
       if(exists) {
         setIsLoading(true)
+
         await createCampaign({ ...form, target: ethers.utils.parseUnits(form.target, 18)})
+
         setIsLoading(false);
+
         navigate('/');
+
       } else {
         alert('Provide valid image URL')
         setForm({ ...form, image: '' });
       }
-    })*/
+    })
   }
 
   return (
