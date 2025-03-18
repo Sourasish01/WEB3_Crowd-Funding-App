@@ -54,12 +54,15 @@ const Home = () => {
     navigate(`/campaign-details/${campaign.id}`, { state: campaign }); 
     //When navigating, we pass the full campaign object as state.
     //This allows the CampaignDetails page to receive the campaign data immediately.
+    // actually means ...navigate(`/campaign-details/id`, { state: { id: "123", title: "Help Build a School", owner: "0xABC..." } });
+
+
   }; 
 
   return (
     <div>
       <h1 className="font-epilogue font-semibold text-[18px] text-white text-left">
-        All Campaigns ({campaigns.length})
+        Campaigns ({campaigns.length})
       </h1>
 
       <div className="flex flex-wrap mt-[20px] gap-[26px]">

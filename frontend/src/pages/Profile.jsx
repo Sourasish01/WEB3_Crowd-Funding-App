@@ -59,7 +59,7 @@ const Profile = () => {
   return (
     <div>
       <h1 className="font-epilogue font-semibold text-[18px] text-white text-left">
-        All Campaigns ({campaigns.length})
+        User Campaigns ({campaigns.length})
       </h1>
 
       <div className="flex flex-wrap mt-[20px] gap-[26px]">
