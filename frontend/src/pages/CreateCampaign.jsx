@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
+import { parseUnits } from "ethers";
 
 // import { useStateContext } from '../context';
 import  money from '../assets/money.svg';
@@ -39,9 +40,15 @@ const CreateCampaign = () => {
     checkIfImage(form.image, async (exists) => { // The checkIfImage function is called with the image URL and a callback function that receives a boolean value (exists) indicating whether the image exists or not.
       
       if(exists) {
+        console.log("Submitting form..."); // 🔍 Debug log
         setIsLoading(true)
 
-        await createCampaign({ ...form, target: ethers.utils.parseUnits(form.target, 18)})
+      
+      
+      
+
+      await createCampaign({ ...form, target: ethers.parseUnits(form.target.toString(), 18) });
+       
 
         setIsLoading(false);
 
