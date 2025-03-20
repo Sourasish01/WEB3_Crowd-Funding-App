@@ -26,10 +26,12 @@ contract CrowdFunding {
     uint256 public numberOfCampaigns = 0;
 
     function createCampaign(address _owner, string memory _title, string memory _description, uint256 _target, uint256 _deadline, string memory _image) public returns (uint256) {
+        /*
         Campaign storage campaign = campaigns[numberOfCampaigns]; // the "campaign" local variable is pointing to the location of the specific "Campaign" struct at "campaigns[numberOfCampaigns]" in "campaigns mapping"
         // initially numberofCampaigns is 0, so it will point to the first struct in the mapping
 
         require(_deadline > block.timestamp, "The deadline should be a date in the future.");
+
 
         campaign.owner = _owner;
         campaign.title = _title;
@@ -38,6 +40,23 @@ contract CrowdFunding {
         campaign.deadline = _deadline;
         campaign.amountCollected = 0;
         campaign.image = _image;
+        */
+
+       require(_deadline > block.timestamp, "The deadline should be a date in the future.");
+       
+        campaigns[numberOfCampaigns] = Campaign({
+            owner: _owner,
+            title: _title,
+            description: _description,
+            target: _target,
+            deadline: _deadline,
+            amountCollected: 0,
+            image: _image,
+            donators: new address[](0), // Explicitly initializes an empty dynamic array
+            donations: new uint256[](0) // Explicitly initializes an empty dynamic array
+    });
+
+
 
         numberOfCampaigns++; // with each time the function called to create a new campaign, the number of campaigns will be increased by 1
 
@@ -96,3 +115,99 @@ contract CrowdFunding {
 
     }
 }
+
+
+/**
+You're using a mapping (campaigns[numberOfCampaigns]),
+ but mappings in Solidity do not grow automatically like arrays.
+  This is why your campaign data isn't being stored properly.
+
+
+1️⃣ Main Issue: Mapping Access & Storage in Solidity
+  In your earlier code, you used:
+
+s
+Campaign storage campaign = campaigns[numberOfCampaigns];
+
+This directly referenced the campaigns[numberOfCampaigns] slot before initializing it.
+Since Solidity mappings do not automatically create storage slots, this led to unexpected behavior.
+Then you manually assigned values like this:
+
+
+campaign.owner = _owner;
+campaign.title = _title;
+campaign.description = _description;
+// ... (other assignments)
+
+
+❌ Problem:
+In Solidity, mappings do not store actual data until explicitly assigned.
+When you access campaigns[numberOfCampaigns], it's just a reference—the data isn't actually allocated in storage.
+If the mapping slot isn’t initialized, the values remain empty or default (0, "", 0x0, etc.).
+💡 
+Fix: Store the struct in the mapping using an assignment
+Instead of modifying a storage reference before it exists, use explicit struct assignment:
+
+
+campaigns[numberOfCampaigns] = Campaign({
+    owner: _owner,
+    title: _title,
+    description: _description,
+    target: _target,
+    deadline: _deadline,
+    amountCollected: 0,
+    image: _image,
+    donators: new address[](0),   // Explicitly initializes an empty dynamic array
+    donations: new uint256[](0)   // ✅ Fix: Correct array initialization
+});
+✅ This directly stores the initialized struct inside the mapping.
+
+2️⃣ Secondary Issue: Array Initialization
+As I explained earlier, your incorrect syntax:
+
+donators: new address,  
+donations: new uint256 
+
+changed to :
+
+donators: new address[](0), // Explicitly initializes an empty dynamic array
+donations: new uint256[](0) // Explicitly initializes an empty dynamic array
+
+
+
+You're right to focus on the change and understand why new address and new uint256 are wrong, and why new address[](0) and new uint256[](0) are correct. Let's break it down:
+
+1. Why new address and new uint256 are Incorrect:
+
+address and uint256 are Value Types:
+
+address and uint256 are fundamental value types in Solidity. They represent single, fixed values (an Ethereum address or an unsigned integer, respectively).
+They are not objects or data structures that need to be dynamically allocated with new.
+
+new for Dynamic Allocation:
+The new keyword in Solidity is primarily used for dynamic memory allocation, which is necessary for:
+Creating new contract instances.
+Creating dynamic arrays (arrays whose size can change during runtime).
+new address and new uint256 are attempting to use the new keyword to create single value types, and that is not what the new keyword is designed to do.
+
+
+2. Why new address[](0) and new uint256[](0) are Correct:
+
+Dynamic Arrays:
+address[] and uint256[] represent dynamic arrays of addresses and unsigned integers, respectively. Dynamic arrays can grow or shrink in size during the contract's execution.
+new address[](0) and new uint256[](0): Dynamic Array Initialization:
+new address[](0) creates a new dynamic array of addresses with an initial size of 0 (an empty array).
+new uint256[](0) creates a new dynamic array of uint256 with an initial size of 0 (an empty array).
+The (0) part specifies that the array should be initialized with zero elements.
+This is the correct way to explicitly create and initialize an empty dynamic array in Solidity.
+
+
+In essence:
+
+You cannot use new to create single address or uint256 values.
+You must use new with the [] notation (and an optional size in parentheses) to create dynamic arrays.
+Specifying the (0) explicitly initializes the array to be empty.
+
+
+
+ */
