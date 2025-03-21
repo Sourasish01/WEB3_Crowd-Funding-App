@@ -68,6 +68,8 @@ contract CrowdFunding {
 
         Campaign storage campaign = campaigns[_id]; // if we know the id of the campaign, we can access the campaign by using the id as the key in the mapping
 
+        require(amount > 0, "Donation must be greater than 0");
+
         campaign.donators.push(msg.sender);
         campaign.donations.push(amount);
 
@@ -77,6 +79,8 @@ contract CrowdFunding {
         // sent will be true if the Ether transfer succeeds.
         // sent will be false if it fails (e.g., if the recipient is a smart contract with no fallback function).
         // The second value in the tuple is ignored using the comma operator (,). The , means we don't store the second return value.
+
+        require(sent, "Failed to send Ether to campaign owner");//If the transfer fails, it reverts the entire transaction instead of just skipping amountCollected update.
 
         if(sent) { // sent = true means the transfer was successful
             campaign.amountCollected = campaign.amountCollected + amount; // the amount collected in the campaign will be increased by the amount sent by the user
