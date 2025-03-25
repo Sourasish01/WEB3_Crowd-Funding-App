@@ -43,16 +43,30 @@ const CreateCampaign = () => {
         console.log("Submitting form..."); // 🔍 Debug log
         setIsLoading(true)
 
-      
-      
-      
 
-      await createCampaign({ ...form, target: ethers.parseUnits(form.target.toString(), 18) });
-       
-
-        setIsLoading(false);
-
-        navigate('/');
+        try {
+          // Get connected user's address dynamically
+          const provider = new ethers.BrowserProvider(window.ethereum);
+          const signer = await provider.getSigner();
+          const userAddress = await signer.getAddress(); // Fetch the connected wallet address
+  
+          // Call createCampaign with correct parameters
+          await createCampaign(
+            userAddress, // Now automatically gets the connected wallet address
+            form.title,
+            form.description,
+            ethers.parseUnits(form.target.toString(), 18),
+            Math.floor(new Date(form.deadline).getTime() / 1000),
+            form.image
+          );
+  
+          setIsLoading(false);
+          navigate('/');
+          
+        } catch (error) {
+          console.error("Error creating campaign:", error);
+          setIsLoading(false);
+        }
 
       } else {
         alert('Provide valid image URL')

@@ -7,7 +7,11 @@ const getContractInstance = async () => {
         return null;
     }
     const provider = new ethers.BrowserProvider(window.ethereum);
+    await window.ethereum.request({ method: "eth_requestAccounts" }); // Ensure user connects
     const signer = await provider.getSigner();
+
+    const address = await signer.getAddress();
+    console.log("📝 Connected Wallet Address:", address);
 
 
     return new ethers.Contract(contractAddress, contractAbi, signer); //This line creates a contract instance using ethers.js.
