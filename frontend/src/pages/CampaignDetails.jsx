@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ethers } from 'ethers';
-
+import ownerImage from '../assets/owner.svg';
+//import logo from "../assets/logo.svg";
 import { contractAddress } from "../config/connectionKeys";
 import getContractInstance from "../store/contractInstance";
 import getDonators from '../store/getDonators';
@@ -29,8 +29,17 @@ const CampaignDetails = () => {
   const [amount, setAmount] = useState('');
   const [donators, setDonators] = useState([]);
 
+  const formatToEth = (wei) => (Number(wei) / 10 ** 18).toFixed(4); // Convert wei to ETH
+
+
+
+  console.log("Campaign Data:", state);
+  console.log("Campaign Deadline:", state.deadline);
+  console.log("Type of Deadline:", typeof state.deadline);
+
 
   const remainingDays = daysLeft(state.deadline);
+  console.log("Remaining Days:", remainingDays);
 
   
   const fetchDonators = async () => {
@@ -42,7 +51,11 @@ const CampaignDetails = () => {
         // setIsLoading(false);
         return;
       }
-      const data = await getDonators(state.pId);// // data is an array of formatted campaigns objects.
+
+
+      const data = await getDonators(state.id);// // data is an array of formatted campaigns objects. // corrected it ...it should be state.id ....not state.pId
+     
+      
       /**
        Returns the parsedDonations array, which contains objects like:
         [
@@ -67,14 +80,16 @@ const CampaignDetails = () => {
 }
 
   useEffect(() => {
-    fetchDonators();
-  }, [contractAddress]);
+    if (state.id) { // corrected it ...it should be state.id ....not state.pId
+      fetchDonators();
+    }
+  }, [state.id, contractAddress]);// corrected it ...it should be state.id ....not state.pId
 
 
   const handleDonate = async () => {
     setIsLoading(true);
 
-    await donateToCampaign(state.id, amount); 
+    await donateToCampaign(state.id, amount); // corrected it ...it should be state.id ....not state.pId
 
     navigate('/')
     setIsLoading(false);
@@ -96,7 +111,7 @@ const CampaignDetails = () => {
 
         <div className="flex md:w-[150px] w-full flex-wrap justify-between gap-[30px]">
           <CountBox title="Days Left" value={remainingDays} />
-          <CountBox title={`Raised of ${state.target}`} value={state.amountCollected} />
+          <CountBox title={`Raised of ${formatToEth(state.target)} ETH`} value={`${formatToEth(state.amountCollected)} ETH`} />
           <CountBox title="Total Backers" value={donators.length} />
         </div>
       </div>
@@ -107,12 +122,12 @@ const CampaignDetails = () => {
             <h4 className="font-epilogue font-semibold text-[18px] text-white uppercase">Creator</h4>
 
             <div className="mt-[20px] flex flex-row items-center flex-wrap gap-[14px]">
-              <div className="w-[52px] h-[52px] flex items-center justify-center rounded-full bg-[#2c2f32] cursor-pointer">
-                <img src={thirdweb} alt="user" className="w-[60%] h-[60%] object-contain"/>
+              <div className="w-[52px] h-[52px] flex items-center justify-center rounded-full bg-[#b2b3bd] cursor-pointer">
+                <img src={ownerImage} alt="user" className="w-[60%] h-[60%] object-contain"/>
               </div>
               <div>
                 <h4 className="font-epilogue font-semibold text-[14px] text-white break-all">{state.owner}</h4>
-                <p className="mt-[4px] font-epilogue font-normal text-[12px] text-[#808191]">10 Campaigns</p>
+                
               </div>
             </div>
           </div>
